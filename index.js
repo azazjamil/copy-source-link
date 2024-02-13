@@ -1,7 +1,7 @@
-function addCopyrightInfo() {
+function addCopyrightInfo(e) {
   var selection, selectedNode, html;
   if (window.getSelection) {
-    var selection = window.getSelection();
+    selection = window.getSelection();
     if (selection.rangeCount) {
       selectedNode = selection.getRangeAt(0).startContainer.parentNode;
       var container = document.createElement("div");
@@ -12,20 +12,32 @@ function addCopyrightInfo() {
     console.debug("The text [selection] not found.");
     return;
   }
+
   var range = selection.getRangeAt(0);
   if (!html) html = "" + selection;
-  html +=
-    ' Source: <a href="theidioms.com" style="color:red">theidioms.com</a>';
+
+  // Add your copyright information with a link
+  html += '<br/><small>Source: <a href="https://theidioms.com" style="color:red">theidioms.com</a></small>';
+
+  // Create a new div to hold the HTML with the added link
   var newdiv = document.createElement("div");
   newdiv.style.position = "absolute";
   newdiv.style.left = "-99999px";
-  selectedNode.appendChild(newdiv);
   newdiv.innerHTML = html;
+
+  // Append the new div to the body
+  document.body.appendChild(newdiv);
+
+  // Select the content within the new div
   selection.selectAllChildren(newdiv);
+
+  // Set a timeout to remove the temporary div and restore the original selection
   window.setTimeout(function () {
-    selectedNode.removeChild(newdiv);
+    document.body.removeChild(newdiv);
     selection.removeAllRanges();
     selection.addRange(range);
   }, 5);
 }
+
+// Add the event listener to the copy event
 document.addEventListener("copy", addCopyrightInfo);
